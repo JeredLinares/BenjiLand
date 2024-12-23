@@ -10,6 +10,10 @@ By: JD Linares
 
 # Software
 - Startup script
+-- Add line in crontab -e
+```
+@reboot python /scripts/benji_game_of_life.py
+```
 - Main Program
 * Rule 1: 
 * Rule 2: 
