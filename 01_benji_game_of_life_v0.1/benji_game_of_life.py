@@ -13,7 +13,8 @@
 
 from gpiozero import LED, Button        # Depends on Raspberry Pi Zero W's GPIO Pins
 #import numpy as np                     # Practicing Python, not numpy
-from time import sleep
+from signal import pause                #
+from time import sleep                  #
 
 butt1 = Button(25)                      # Sets screen to next inital frame
 butt2 = Button(26)                      # Increments frame
@@ -24,6 +25,8 @@ for led_num in range(25):
 	led_set[led_num] = LED(led_num)
 	led_set[led_num].off()
 
+
+# Debug 5x5 matrix
 # Debug - All off / on
 def debug_func1():
 	for led_num in range(25):
@@ -31,15 +34,14 @@ def debug_func1():
 def debug_func2():
 	for led_num in range(25):
 		led_set[led_num].on()
-
-#   ''' Debug Test
+'''
 debug_func1()
 sleep(5)
 debug_func2()
 sleep(5)
 debug_func1()
 sleep(5)
-#   '''
+'''
 
 # Initalize a global 5x5x17 matrix which will hold the starting conditions
 # Account for Python's copy by reference (ie. don't use [[[0]*n]*n]*n], instead use [ 0 for x in range(25) ]
@@ -49,6 +51,7 @@ game_starting_conditions = [[[0 for i in range(5)] for j in range(5)] for k in r
 
 # Initalize a counter to follow current initall frame
 start_counts = 0
+
 
 # Read starting frames file and set values in starting frames matrix
 with open("./input.txt") as starting_frames_data:
@@ -66,8 +69,10 @@ with open("./input.txt") as starting_frames_data:
             game_starting_conditions[frame][line_number] = line_to_set
 #print(game_starting_conditions)
 
+# Set starting frame
+current_frame = game_starting_conditions[0]
 
-def next_frame():
+def next_frame(pass_current_frame):
     """
     # Function to Iterate to next frame
     # Due to 5x5 constraint due to limited GPIO pins on Rasberry pi, act as if continous column 0 to column 4 and row 0 to row 4 (
@@ -88,7 +93,7 @@ def next_frame():
             for x in range(-1,2):
                 for y in range(-1,2):
                     if( x!=0 or y!=0 ):    #this has to be complicated because python doesn't let you leave empty if statements
-                        number_alive_cells += current_frame[ (row + x) % 5 ][ (element + y) % 5 ]
+                        number_alive_cells += pass_current_frame[ (row + x) % 5 ][ (element + y) % 5 ]
             if number_alive_cells < 2:
                 next_frame[row][element] = 0
             elif number_alive_cells > 3:
@@ -99,7 +104,7 @@ def next_frame():
                 next_frame[row][element] = 1
     return next_frame
 
-# For Debugging: iterate though 10 steps of each starting case
+# For Debugging: iterate though 10 steps of each starting case to confirm expected output
 def debug_func3():
     print("Debugger output")
     for starter in range(17):
@@ -114,29 +119,40 @@ def debug_func3():
             [print(output_row) for output_row in current_frame]
             print()
 
-# Set LEDs based on matrix data
+# Function to set LEDs based on a 5x5 matrix
 def set_LED_matrix(the_inital_frame):    # input must be 5x5
     for i in range(5):
         for j in range(5):
             if the_inital_frame[i][j] == 1:
-                led_set(i+5*j).on()               # LEDs are setup sequentially from 0-24
+                led_set[i+5*j].on()               # LEDs are setup sequentially from 0-24
             else:
-                led_set(i+5*j).off()
+                led_set[i+5*j].off()
+
+
+# Setup Button 1 Funtion: Go to next inital frame 
+def set_next_inital_frame():
+    print("button 1 function")
+    global start_counts 
+    start_counts =  start_counts + 1
+    global current_frame
+    current_frame = game_starting_conditions[start_counts]
+    set_LED_matrix(current_frame)
+
+# Setup Button 2 Function: Step to next frame
+def iterate_LED_frame():
+    print("button 2 function")
+    global current_frame
+    next_frame_to_show = next_frame(current_frame)
+    set_LED_matrix(next_frame_to_show)
+    current_frame = next_frame_to_show
+    set_LED_matrix(current_frame)
 
 # Start the game at the first inital frame
-# Initalize a 5x5 matrix to use as current frame
-current_frame = game_starting_conditions[0]
+set_LED_matrix(current_frame)
 
+# Setup Buttons
+butt1.when_pressed = set_next_inital_frame
+butt2.when_pressed = iterate_LED_frame
 
-#   sleep(20)
-
-
-
-
-
-
-
-
-
-
+pause()
 
