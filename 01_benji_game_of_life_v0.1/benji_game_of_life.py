@@ -1,50 +1,54 @@
 # Benji's Conway's The Game of Life
 # JD Linares
-# 2024 12 22
+# Created: 2024 12 22
+# Last update: 2024 12 27
 
 # Created with love for my son 
-# to inspire his curiosity
+# May it inspire his curiosity love for knowledge
 
 # The hardware is two buttons and a 5x5 LED matrix, controlled by a Raspberry Pi Zero W
 # One button iterates starting frames from 1-17, then randomly assignes starting conditions with <50% of the screen filled
 # The second button steps though frames based on the starting frame
 # This is made in the style of a toddler's wooden block toy
 
-import RPi.GPIO as GPIO     # Depends on Raspberry Pi Zero W's GPIO Pins
-#import numpy as np         # Practicing Python, not numpy
+from gpiozero import LED, Button        # Depends on Raspberry Pi Zero W's GPIO Pins
+#import numpy as np                     # Practicing Python, not numpy
+from time import sleep
 
-'''
-# GPIOs have default values that you override
-#GPIO.setwarnings(False)
+butt1 = Button(25)                      # Sets screen to next inital frame
+butt2 = Button(26)                      # Increments frame
+led_set = [ 0 for x in range(25)]
 
-# Initalize GPIO Pins
-GPIO.setmode(GPIO.BCM)
-# LEDs
-# BCM board does not use numbers 17-20
-led_list_a = list(range(1,17))
-led_list_b = list(range(21,30))
-led_list = led_list_a + led_list_b
-GPIO.setup(led_list,GPIO.OUT)
-GPIO.output(led_list,GPIO.LOW)
+# Initalize the 5x5 matrix of LEDs
+for led_num in range(25):
+	led_set[led_num] = LED(led_num)
+	led_set[led_num].off()
 
-# Buttons
-button_list = list(range(30,32))
-GPIO.setup(button_list,GPIO.IN)
+# Debug - All off / on
+def debug_func1():
+	for led_num in range(25):
+		led_set[led_num].off()
+def debug_func2():
+	for led_num in range(25):
+		led_set[led_num].on()
 
-'''
+#   ''' Debug Test
+debug_func1()
+sleep(5)
+debug_func2()
+sleep(5)
+debug_func1()
+sleep(5)
+#   '''
 
 # Initalize a global 5x5x17 matrix which will hold the starting conditions
-# Account for Python's copy by reference (ie. don't use [[[0]*n]*n]*n])
-# ??? Is "starting_conditions" a reserved word?
+# Account for Python's copy by reference (ie. don't use [[[0]*n]*n]*n], instead use [ 0 for x in range(25) ]
 
-game_starting_conditions = [[[0 for i in range(5)] for j in range(5)] for k in range(17)]       ## TODO un-hardcode 17
+game_starting_conditions = [[[0 for i in range(5)] for j in range(5)] for k in range(17)]       ## TODO evenutally un-hardcode 17
 #print(game_starting_conditions)
-
 
 # Initalize a counter to follow current initall frame
 start_counts = 0
-
-
 
 # Read starting frames file and set values in starting frames matrix
 with open("./input.txt") as starting_frames_data:
@@ -62,9 +66,6 @@ with open("./input.txt") as starting_frames_data:
             game_starting_conditions[frame][line_number] = line_to_set
 #print(game_starting_conditions)
 
-# Initalize a 5x5 matrix to use as current frame
-current_frame = game_starting_conditions[0]
-
 
 def next_frame():
     """
@@ -75,7 +76,7 @@ def next_frame():
     # Rule 3:  Any live cell with more than 3 live neighbours dies, as if by over population
     # Rule 4:  Any dead cell with exactly 3 live neighbours becomes a live cell, as if by reproduction
     """
-
+    
     # Define a 5x5 array to return as the next frame
     next_frame = [[0 for x in range(5)] for y in range(5)]
 
@@ -98,32 +99,40 @@ def next_frame():
                 next_frame[row][element] = 1
     return next_frame
 
-
 # For Debugging: iterate though 10 steps of each starting case
-print("Debugger output")
-for starter in range(17):
-    current_frame = game_starting_conditions[starter]
-    print()
-    print()
-    print("Restart " + str(starter))
-    [print(output_row) for output_row in current_frame]
-    print()
-    for step in range(10):
-        current_frame = next_frame()
+def debug_func3():
+    print("Debugger output")
+    for starter in range(17):
+        current_frame = game_starting_conditions[starter]
+        print()
+        print()
+        print("Restart " + str(starter))
         [print(output_row) for output_row in current_frame]
         print()
+        for step in range(10):
+            current_frame = next_frame()
+            [print(output_row) for output_row in current_frame]
+            print()
+
+# Set LEDs based on matrix data
+def set_LED_matrix(the_inital_frame):    # input must be 5x5
+    for i in range(5):
+        for j in range(5):
+            if the_inital_frame[i][j] == 1:
+                led_set(i+5*j).on()               # LEDs are setup sequentially from 0-24
+            else:
+                led_set(i+5*j).off()
+
+# Start the game at the first inital frame
+# Initalize a 5x5 matrix to use as current frame
+current_frame = game_starting_conditions[0]
+
+
+#   sleep(20)
 
 
 
-# Loop checking if eather button is pressed
 
-
-# GPIO.input(30)
-# GPIO.input(31)
-
-
-
-# Should never reach this point due to infinate loop
 
 
 
