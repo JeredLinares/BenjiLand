@@ -133,7 +133,7 @@ def set_LED_matrix(the_inital_frame):    # input must be 5x5
 def set_next_inital_frame():
     print("button 1 function")
     global start_counts 
-    start_counts =  start_counts + 1
+    start_counts =  (start_counts + 1)%16       ## TODO change this to generate random start after 17
     global current_frame
     current_frame = game_starting_conditions[start_counts]
     set_LED_matrix(current_frame)
@@ -143,7 +143,6 @@ def iterate_LED_frame():
     print("button 2 function")
     global current_frame
     next_frame_to_show = next_frame(current_frame)
-    set_LED_matrix(next_frame_to_show)
     current_frame = next_frame_to_show
     set_LED_matrix(current_frame)
 
