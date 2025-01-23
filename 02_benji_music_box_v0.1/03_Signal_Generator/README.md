@@ -1,10 +1,15 @@
 # Signal Generator
-JD Linares  
-2025 01 23  
 Generate data to test that speaker works.
-- Components: Data / Code / Circuit
+- Components to Test: 
+  - Data
+  - Code
+  - Circuit
 
-# Data
+## Author 
+2025 01 23   
+JD Linares   
+
+## Data
 Creates a .raw file to emulate what the music will look like.  
 Contains a middle C tone wave form sampled at 44.1kHz with 16bit unsigned integers  
 Period of middle C is 0.00383 seconds  
@@ -15,8 +20,8 @@ Middle C: 261 cycles/sec
 - max: 65,535 
 - min: 0
 
-# Generator
-__V = 65535*sin((2*pi/0.00383)*t)__
+## Generator
+__V = 65535 * sin((2 * pi/0.00383) * t)__
 
 
 
