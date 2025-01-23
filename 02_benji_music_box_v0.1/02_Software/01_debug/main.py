@@ -4,10 +4,12 @@ Plays songs for Benji
 
 JD Linares
 2025 01 23
+
+On the pico, what should last 10 seconds lasts ~5seconds
 '''
 
-from machine import PWM
-
+from machine import Pin,PWM
+import time
 
 data_loop = (
 32768,
@@ -181,15 +183,16 @@ data_loop = (
 31591
 )
 
+pin = Pin(0,Pin.OUT)
+pwm = PWM(pin,freq=44100,duty_u16=0)
 
-pwm = PWM(pin=0,freq=44100,duty_u16=0)
-
-# Seconds
-for i in range(5):
-    for j in data_loop:
-        pwm.duty_u16(j)
+def run_x_secs(run_secs):
+    for i in range(run_secs*260):
+        for j in data_loop:
+            pwm.duty_u16(j)
 
 
+run_x_secs(10)
 
 
 
