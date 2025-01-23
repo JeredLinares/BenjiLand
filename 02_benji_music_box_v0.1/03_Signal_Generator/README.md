@@ -6,8 +6,8 @@ Generate data to test that speaker works.
   - Circuit
 
 ## Author 
-2025 01 23   
 JD Linares   
+2025 01 23   
 
 ## Data
 Creates a .raw file to emulate what the music will look like.  
@@ -20,8 +20,10 @@ Middle C: 261 cycles/sec
 - max: 65,535 
 - min: 0
 
-## Generator
-__V = 65535 * sin((2 * pi/0.00383) * t)__
+## Generator Equation
+__V = 65535 * sin((2 * pi/0.00383) * t)__  
+For 169 data points in increments of 1/44100 seconds
+
 
 
 
