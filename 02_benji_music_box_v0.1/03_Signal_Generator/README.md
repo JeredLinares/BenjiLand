@@ -16,7 +16,7 @@ Middle C: 261 cycles/sec
 - min: 0
 
 # Generator
-**V = 65535*sin((2*pi/0.00383)*t)**
+__V = 65535*sin((2*pi/0.00383)*t)__
 
 
 
