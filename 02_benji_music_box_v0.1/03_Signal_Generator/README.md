@@ -1,6 +1,8 @@
 # Signal Generator
-JD Linares
-2025 01 23
+JD Linares  
+2025 01 23  
+Generate data to test that speaker works.
+- Components: Data / Code / Circuit
 
 # Data
 Creates a .raw file to emulate what the music will look like.  
@@ -14,7 +16,7 @@ Middle C: 261 cycles/sec
 - min: 0
 
 # Generator
-** V = 65535*sin((2*pi/0.00383)*t) **
+**V = 65535*sin((2*pi/0.00383)*t)**
 
 
 
